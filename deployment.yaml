@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dice-app
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: us-west1-docker.pkg.dev/cka-certification-cource/otelarc/otel-dice
+    argocd-image-updater.argoproj.io/dice.update-strategy: latest
+    argocd-image-updater.argoproj.io/dice.write-back-method: git
+    argocd-image-updater.argoproj.io/dice.git-branch: main
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: dice-app
+  template:
+    metadata:
+      labels:
+        app: dice-app
+    spec:
+      containers:
+      - name: dice-app
+        image: otelacr/otel-dice:1
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+        ports:
+        - containerPort: 3000
+        env:
+            - name: OTEL_SERVICE_NAME
+              value: dice-app
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://otel-collector:4318
+            - name: OTEL_TRACES_SAMPLER
+              value: parentbased_traceidratio
+            - name: OTEL_TRACES_SAMPLER_ARG
+              value: "1.0"
