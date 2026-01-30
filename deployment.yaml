@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: dice-app
-        image: otelacr/otel-dice:1
+        image: us-west1-docker.pkg.dev/cka-certification-cource/otelarc/otel-dice:1
         resources:
           limits:
             memory: "128Mi"
